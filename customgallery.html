@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Login Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #134eff, #d30f0f);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .container {
+            background: transparent;
+            padding: 40px;
+            border-color: #d30f0f;
+            border-radius: 60px;
+            box-shadow: 0 4px 20px rgba(1, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            backdrop-filter: blur(10px); /* Blur effect */
+            border: 2px solid #007bff;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: floralwhite;
+            filter:contrast();
+        }
+        h4 {
+            margin-bottom: 20px;
+            color: rgb(9, 164, 203);
+            filter:contrast();
+        }
+        input {
+            padding: 15px;
+            margin: 10px 0;
+            width: calc(100% - 32px); /* Adjusting for container padding */
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box; /* Ensures padding is included in width */
+        }
+        button {
+            padding: 15px;
+            width: calc(100% - 32px); /* Adjusting for container padding */
+            border: none;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-sizing: border-box; /* Ensures padding is included in width */
+        }
+        button:disabled {
+            background-color: #cccccc;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+        .loading {
+            display: none;
+            margin-top: 10px;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+    <div class="container">
+        <h2>Login</h2>
+        <input type="text" id="usernameInput" placeholder="Username" required />
+        <input type="password" id="passwordInput" placeholder="Password" required />
+        <button id="loginButton">Login</button>
+        <h4>🔐 powered by: FireAuth</h4>
+        <div class="loading" id="loadingSpinner">
+            <div class="loader"></div>
+        </div>
+        <div class="error" id="errorMessage"></div>
+    </div>
+
+    <script>
+        const credentials = {
+            "Harshsri23": "har0293",
+            "Dhruvpach21": "pach8523",
+            "Ishugup22": "ish4569",
+            "Princekush24": "prin7532"
+        };
+
+        // Redirect to gallery page if already logged in
+        if (sessionStorage.getItem("loggedIn") === "true") {
+            window.location.href = "maingallery.html";
+        }
+
+        document.getElementById("loginButton").addEventListener("click", function () {
+            const username = document.getElementById("usernameInput").value.trim();
+            const password = document.getElementById("passwordInput").value.trim();
+            const errorMessage = document.getElementById("errorMessage");
+            const loadingSpinner = document.getElementById("loadingSpinner");
+
+            // Reset error message
+            errorMessage.textContent = '';
+
+            // Show loading spinner
+            loadingSpinner.style.display = "block";
+
+            setTimeout(() => {
+                // Hide loading spinner
+                loadingSpinner.style.display = "none";
+
+                if (credentials[username] && credentials[username] === password) {
+                    // Store session
+                    sessionStorage.setItem("loggedIn", "true");
+                    sessionStorage.setItem("username", username);
+
+                    // Redirect to gallery page
+                    window.location.href = "maingallery.html";
+                } else {
+                    errorMessage.textContent = "Invalid username or password.";
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
