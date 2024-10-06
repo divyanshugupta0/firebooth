@@ -14,7 +14,7 @@
             scroll-behavior: smooth;
             overflow: auto;
         }
-        .H2{
+        .H2 {
             color: #ddd;
         }
         .container {
@@ -28,7 +28,7 @@
             justify-content: center;
             margin: 20px;
         }
-        .photo {
+        .item {
             position: relative;
             border: 1px solid #ddd;
             border-radius: 5px;
@@ -36,11 +36,11 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             cursor: pointer;
         }
-        .photo img {
+        .item img, .item video, .item iframe {
             width: 100%;
             height: auto;
         }
-        .photo .download-button {
+        .item .download-button {
             position: absolute;
             bottom: 10px;
             right: 10px;
@@ -61,7 +61,6 @@
             font-size: 16px;
             margin: 20px;
         }
-        /* Custom popup styles */
         .popup {
             display: none;
             position: fixed;
@@ -98,86 +97,151 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .ok-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
     <div class="popup-overlay" id="popupOverlay"></div>
     <div class="popup" id="logoutPopup">
-        <div class="loader"></div>
-        <p>Logging out...</p>
+        <p>Session timeout. Please log in again.</p>
+        <button class="ok-button" id="okButton">Okay</button>
     </div>
 
     <div class="container">
         <h2 id="welcomeMessage" class="H2">Welcome, <span id="username"></span></h2>
         <button class="logout-button" id="logoutButton">Logout</button>
-        <div class="gallery" id="photoGallery">
-            <!-- Photos will be shown based on the user's session -->
+        <div class="gallery" id="gallery">
+            <!-- Content will be shown based on the user's session -->
         </div>
     </div>
 
     <script>
-        // Define photo data
-        const photos = {
-            "Harshsri23": ["1726766424955.jpeg","1726766425001.jpeg","1726766425102.jpeg","1726766425198.jpeg","1726766426253.jpeg","1726766426319.jpeg","1726766427147.jpeg","1726766427619.jpeg","1726766428183.jpeg","1726766429930.jpeg","1726766431046.jpeg","1726766432160.jpeg","1726766433850.jpeg","1726766441602.jpeg","1726766442786.jpeg","1726766492258.mp4","1726766485889.mov","1726766494619.mov","1726766495911.jpeg"],
-            "Dhruvpach21": ["1726766426319.jpeg","1726766427147.jpeg","1726766427619.jpeg","1726766428183.jpeg","1726766429930.jpeg","1726766431046.jpeg","1726766432160.jpeg","1726766433850.jpeg","1726766441602.jpeg","1726766442786.jpeg","1726766492258.mp4","1726766485889.mov","1726766494619.mov","1726766495911.jpeg"],
-            "Ishugup22": ["1726766425719.jpeg","1726766425285.jpeg","1726766425789.jpeg","1726766424955.jpeg","1726766425001.jpeg","1726766427147.jpeg","1726766427619.jpeg","1726766428183.jpeg","1726766429930.jpeg","1726766431046.jpeg","1726766432160.jpeg","1726766433850.jpeg","1726766441602.jpeg","1726766442786.jpeg","1726766492258.mp4","1726766485889.mov","1726766494619.mov","1726766495911.jpeg","1726766495988.mov"],
-            "Princekush24": ["1726766426319.jpeg","1726766425001.jpeg","1726766424955.jpeg","1726766427147.jpeg","1726766427619.jpeg","1726766428183.jpeg","1726766429930.jpeg","1726766431046.jpeg","1726766432160.jpeg","1726766433850.jpeg","1726766441602.jpeg","1726766442786.jpeg","1726766435048.jpeg","1726766435791.jpeg","1726766436564.jpeg","1726766437314.jpeg","1726766438009.jpeg","1726766438715.jpeg","1726766439437.jpeg","1726766439852.jpeg","1726766440289.jpeg","1726766440809.jpeg","1726766441227.jpeg","1726766444929.jpeg","1726766445849.jpeg","1726766446156.jpeg","1726766446803.jpeg","1726766447543.jpeg","1726766447817.jpeg","1726766492258.mp4","1726766485889.mov","1726766494619.mov","1726766495911.jpeg"]
+        // Define media data for each user
+        const media = {
+            "Harshsri23": [
+            "1726766424955.jpeg","1726766425001.jpeg","1726766425102.jpeg","1726766425198.jpeg","1726766426253.jpeg","1726766426319.jpeg","1726766427147.jpeg","1726766427619.jpeg","1726766428183.jpeg","1726766429930.jpeg","1726766431046.jpeg","1726766432160.jpeg","1726766433850.jpeg","1726766441602.jpeg","1726766442786.jpeg","1726766492258.mp4","1726766485889.mov","1726766494619.mov","1726766495911.jpeg"
+            ],
+            "Ishugup22": [
+                "1726766425719.jpeg","1726766425285.jpeg","1726766425789.jpeg","1726766424955.jpeg","1726766425001.jpeg","1726766427147.jpeg","1726766427619.jpeg","1726766428183.jpeg","1726766429930.jpeg","1726766431046.jpeg","1726766432160.jpeg","1726766433850.jpeg","1726766441602.jpeg","1726766442786.jpeg","1726766492258.mp4","1726766485889.mov","1726766494619.mov","1726766495911.jpeg","1726766495988.mov"
+            ],
+            "Princekush24": [
+                "1726766426319.jpeg","1726766425001.jpeg","1726766424955.jpeg","1726766427147.jpeg","1726766427619.jpeg","1726766428183.jpeg","1726766429930.jpeg","1726766431046.jpeg","1726766432160.jpeg","1726766433850.jpeg","1726766441602.jpeg","1726766442786.jpeg","1726766435048.jpeg","1726766435791.jpeg","1726766436564.jpeg","1726766437314.jpeg","1726766438009.jpeg","1726766438715.jpeg","1726766439437.jpeg","1726766439852.jpeg","1726766440289.jpeg","1726766440809.jpeg","1726766441227.jpeg","1726766444929.jpeg","1726766445849.jpeg","1726766446156.jpeg","1726766446803.jpeg","1726766447543.jpeg","1726766447817.jpeg","1726766492258.mp4","1726766485889.mov","1726766494619.mov","1726766495911.jpeg"
+            ],
+            "Yashdar26": [
+                "1728204832827.jpeg","1728204834451.jpeg","1728204835737.jpeg","1728204837090.jpeg","1728204840083.jpeg","1728204843359.jpeg","1728204846053.jpeg","1728204847846.jpeg","1728204848895.jpeg","1728204850110.jpeg","1728204851110.jpeg","1728204851446.jpeg","1728204851748.jpeg","1728204852139.jpeg","1728204853090.jpeg","1728204853523.jpeg","1728204854681.jpeg","1728204855497.jpeg","1728204855875.jpeg","1728204856247.jpeg","1728204856663.jpeg","1728204857052.jpeg","1728204857496.jpeg","1728204857947.jpeg","1728204858790.jpeg","1728204859175.jpeg","1728204859929.jpeg","1728204860541.jpeg","1728213493357.mov"
+            ],
+            "Dhruvpach21": [
+                "1726766426319.jpeg","1726766427147.jpeg","1726766427619.jpeg","1726766428183.jpeg","1726766429930.jpeg","1726766431046.jpeg","1726766432160.jpeg","1726766433850.jpeg","1726766441602.jpeg","1726766442786.jpeg","1726766492258.mp4","1726766485889.mov","1726766494619.mov","1726766495911.jpeg"
+            ],
+            "Divyanshu25": [
+                "Lecture 1-Introduction to OS.pptx", "What is Semaphore.doc"
+            ]
         };
+
+        // Define session timeout in milliseconds (10 minutes = 600000ms)
+        const sessionTimeout = 600000;
+
+        let timeoutHandle;
+
+        // Reset session timeout on user activity
+        function resetSessionTimeout() {
+            clearTimeout(timeoutHandle);
+            timeoutHandle = setTimeout(showSessionTimeoutPopup, sessionTimeout);
+        }
+
+        // Show session timeout popup
+        function showSessionTimeoutPopup() {
+            document.getElementById("popupOverlay").style.display = "block";
+            document.getElementById("logoutPopup").style.display = "block";
+        }
+
+        // Okay button click event
+        document.getElementById("okButton").addEventListener("click", function() {
+            sessionStorage.removeItem("loggedIn");
+            sessionStorage.removeItem("username");
+            window.location.href = "customgallery";
+        });
+
+        // Logout function
+        function logout() {
+            document.getElementById("popupOverlay").style.display = "block";
+            document.getElementById("logoutPopup").style.display = "block";
+            setTimeout(() => {
+                sessionStorage.removeItem("loggedIn");
+                sessionStorage.removeItem("username");
+                window.location.href = "customgallery";
+            }, 2000);
+        }
+
+        // Initialize session timeout
+        resetSessionTimeout();
+
+        // Monitor user activity to reset the session timeout
+        window.addEventListener('mousemove', resetSessionTimeout);
+        window.addEventListener('keypress', resetSessionTimeout);
+        window.addEventListener('click', resetSessionTimeout);
 
         // Check session on page load
         if (sessionStorage.getItem("loggedIn") !== "true") {
-            window.location.href = "customgallery.html";
+            window.location.href = "customgallery";
         }
 
-        // Prevent going back to login page
-        history.pushState(null, '', location.href);
-        window.onpopstate = function () {
-            history.go(1);
-        };
-
-        // Display welcome message
+        // Display welcome messageF
         const username = sessionStorage.getItem("username");
         document.getElementById("username").textContent = username;
 
-        // Load photos
-        const photoGallery = document.getElementById("photoGallery");
-        const userPhotos = photos[username] || [];
-        userPhotos.forEach(photo => {
-            const photoElement = document.createElement('div');
-            photoElement.className = 'photo';
-            photoElement.innerHTML = `
-                <img src="${photo}" alt="Photo">
-                <button class="download-button" onclick="downloadImage('${photo}')">Download</button>
-            `;
-            photoGallery.appendChild(photoElement);
+        // Load media (images, videos, documents)
+        const gallery = document.getElementById("gallery");
+        const userMedia = media[username] || [];
+
+        userMedia.forEach(item => {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'item';
+
+            if (item.endsWith('.jpeg') || item.endsWith('.png') || item.endsWith('.jpg')) {
+                itemElement.innerHTML = `
+                    <img src="${item}" alt="Image">
+                    <button class="download-button" onclick="downloadFile('${item}')">Download</button>
+                `;
+            } else if (item.endsWith('.mp4') || item.endsWith('.mov')) {
+                itemElement.innerHTML = `
+                    <video controls>
+                        <source src="${item}" type="video/mp4">
+                        Your browser does not support video playback.
+                    </video>
+                    <button class="download-button" onclick="downloadFile('${item}')">Download</button>
+                `;
+            } else {
+                itemElement.innerHTML = `
+                    <iframe src="${item}" width="100%" height="300px"></iframe>
+                    <button class="download-button" onclick="downloadFile('${item}')">Download</button>
+                `;
+            }
+
+            gallery.appendChild(itemElement);
         });
+
+        // Function to handle file download
+        function downloadFile(src) {
+            const a = document.createElement('a');
+            a.href = src;
+            a.download = src.split('/').pop();
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
 
         // Logout button click event
-        document.getElementById("logoutButton").addEventListener("click", function () {
-            // Show custom popup
-            document.getElementById("popupOverlay").style.display = "block";
-            document.getElementById("logoutPopup").style.display = "block";
+        document.getElementById("logoutButton").addEventListener("click", logout);
 
-            // Simulate logout process
-            setTimeout(() => {
-                // Clear session
-                sessionStorage.removeItem("loggedIn");
-                sessionStorage.removeItem("username");
-
-                // Redirect to login page
-                window.location.href = "customgallery.html";
-            }, 2000); // Adjust time as needed for the loader
-        });
-
-        // Function to handle image download
-        function downloadImage(src) {
-            const link = document.createElement('a');
-            link.href = src;
-            link.download = src.split('/').pop();
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
     </script>
 </body>
 </html>
