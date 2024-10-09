@@ -4,7 +4,8 @@ const credentials = {
             "Ishugup22": "ish4569",
             "Princekush24": "prin7532",
             "Divyanshu25" : "div9027",
-            "Yashdar26" : "yas4856"
+            "Yashdar26" : "yas4856",
+            "Devanshi32" : "deva4585"
         };
 
         // Disable right-click
