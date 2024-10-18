@@ -3,9 +3,11 @@ const credentials = {
             "Dhruvpach21": "pach8523",
             "Ishugup22": "ish4569",
             "Princekush24": "prin7532",
+            "Divyanshu25" : "div9027",
+            "Yashdar26" : "yas4856",
             "Devanshi32" : "deva4585",
-            "Ashish95": "ash8546",
-            "Keshav85" : "kesh9567"
+            "Ashish45" : "ash8546",
+            "Keshav77" : "kesh9567"
         };
 
         // Disable right-click
@@ -55,3 +57,15 @@ const credentials = {
                 }
             }, 2000);
         });
+    // Disable right-click (context menu)
+    document.addEventListener("contextmenu", function (e) {
+        e.preventDefault();
+    }, false);
+
+    // Disable specific keys like F12 (DevTools), Ctrl+Shift+I, Ctrl+U (View Source)
+    document.onkeydown = function (e) {
+        if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73) || (e.ctrlKey && e.keyCode == 85)) {
+            // 123 = F12, Ctrl+Shift+I = 73, Ctrl+U = 85
+            return false;
+        }
+    };
